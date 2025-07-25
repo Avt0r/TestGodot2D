@@ -1,0 +1,156 @@
+[gd_scene load_steps=9 format=3 uid="uid://dy8wjmyuj66lj"]
+
+[ext_resource type="Script" uid="uid://brj7cg112ho8i" path="res://general/GameManager.gd" id="1_7un81"]
+[ext_resource type="Script" uid="uid://7qigpg226is5" path="res://general/GameInput.gd" id="2_berm2"]
+[ext_resource type="Script" uid="uid://dmwll102hgcbi" path="res://general/UI.gd" id="2_jj6ev"]
+[ext_resource type="Script" uid="uid://cai1kq733sptd" path="res://general/LevelManager.gd" id="3_1kwxw"]
+[ext_resource type="PackedScene" uid="uid://bmnohrg3hlbwc" path="res://units/res/Player.tscn" id="4_c3qqq"]
+[ext_resource type="PackedScene" uid="uid://c0hhk3nqotein" path="res://levels/level-1.tscn" id="4_v1c5r"]
+[ext_resource type="Script" uid="uid://bdnyadty3e47q" path="res://general/HUD.gd" id="7_2q2fk"]
+
+[sub_resource type="GDScript" id="GDScript_jj6ev"]
+script/source = "extends Camera2D
+
+@export var target:Node2D
+
+func _process(delta: float) -> void:
+	if target != null:
+		global_position = target.global_position
+"
+
+[node name="GameManager" type="Node"]
+script = ExtResource("1_7un81")
+
+[node name="GameInput" type="Node" parent="."]
+script = ExtResource("2_berm2")
+
+[node name="LevelManager" type="Node" parent="."]
+script = ExtResource("3_1kwxw")
+player_res = ExtResource("4_c3qqq")
+levels_res = Array[Resource]([ExtResource("4_v1c5r")])
+
+[node name="GameCamera" type="Camera2D" parent="LevelManager"]
+zoom = Vector2(1.4, 1.4)
+limit_smoothed = true
+position_smoothing_enabled = true
+script = SubResource("GDScript_jj6ev")
+
+[node name="UI" type="CanvasLayer" parent="."]
+script = ExtResource("2_jj6ev")
+
+[node name="Main" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BtnPlay" type="Button" parent="UI/Main"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.4
+anchor_right = 0.6
+anchor_bottom = 0.6
+grow_horizontal = 2
+grow_vertical = 2
+text = "play"
+
+[node name="Game" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HUD" type="Control" parent="UI/Game"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("7_2q2fk")
+
+[node name="Info" type="VBoxContainer" parent="UI/Game/HUD"]
+layout_mode = 1
+anchors_preset = -1
+offset_left = 10.0
+offset_top = 10.0
+
+[node name="HP" type="Label" parent="UI/Game/HUD/Info"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "HP: 0"
+
+[node name="Kills" type="Label" parent="UI/Game/HUD/Info"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Kills: 0"
+
+[node name="GameOver" type="Control" parent="UI/Game"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="UI/Game/GameOver"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -45.5
+offset_top = -11.5
+offset_right = 45.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "GEME OVER"
+
+[node name="Button" type="Button" parent="UI/Game/GameOver"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.5
+offset_top = 23.5
+offset_right = 30.5
+offset_bottom = 54.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "restart"
+
+[node name="Pause" type="Control" parent="UI/Game"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="UI/Game/Pause"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.5
+offset_top = -15.5
+offset_right = 30.5
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "restart"
+
+[connection signal="pressed" from="UI/Main/BtnPlay" to="." method="play"]
+[connection signal="pressed" from="UI/Game/GameOver/Button" to="." method="restart"]
+[connection signal="pressed" from="UI/Game/Pause/Button" to="." method="restart"]
